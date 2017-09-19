@@ -33,23 +33,6 @@
 #include <Chipset/mipi_dsi.h>
 #include <Platform/display.h>
 
-#ifndef DISPLAY_TYPE_HDMI
-static int hdmi_dtv_init(void)
-{
-        return 0;
-}
-
-static int hdmi_dtv_on(void)
-{
-        return 0;
-}
-
-static int hdmi_msm_turn_on(void)
-{
-        return 0;
-}
-#endif
-
 static struct msm_fb_panel_data *panel;
 
 static int msm_fb_alloc(struct fbcon_config *fb)
@@ -82,12 +65,6 @@ int msm_display_config(void)
 	mdp_set_revision(panel->mdp_rev);
 
 	switch (pinfo->type) {
-	case LVDS_PANEL:
-		dprintf(INFO, "Config LVDS_PANEL.\n");
-		ret = mdp_lcdc_config(pinfo, &(panel->fb));
-		if (ret)
-			goto msm_display_config_out;
-		break;
 	case MIPI_VIDEO_PANEL:
 		dprintf(INFO, "Config MIPI_VIDEO_PANEL.\n");
 		ret = mipi_config(panel);
@@ -107,18 +84,6 @@ int msm_display_config(void)
 		if (ret)
 			goto msm_display_config_out;
 		ret = mdp_dsi_cmd_config(pinfo, &(panel->fb));
-		if (ret)
-			goto msm_display_config_out;
-		break;
-	case LCDC_PANEL:
-		dprintf(INFO, "Config LCDC PANEL.\n");
-		ret = mdp_lcdc_config(pinfo, &(panel->fb));
-		if (ret)
-			goto msm_display_config_out;
-		break;
-	case HDMI_PANEL:
-		dprintf(INFO, "Config HDMI PANEL.\n");
-		ret = hdmi_dtv_init();
 		if (ret)
 			goto msm_display_config_out;
 		break;
@@ -144,15 +109,6 @@ int msm_display_on(void)
 	pinfo = &(panel->panel_info);
 
 	switch (pinfo->type) {
-	case LVDS_PANEL:
-		dprintf(INFO, "Turn on LVDS PANEL.\n");
-		ret = mdp_lcdc_on();
-		if (ret)
-			goto msm_display_on_out;
-		ret = lvds_on(panel);
-		if (ret)
-			goto msm_display_on_out;
-		break;
 	case MIPI_VIDEO_PANEL:
 		dprintf(INFO, "Turn on MIPI_VIDEO_PANEL.\n");
 		ret = mdp_dsi_video_on();
@@ -171,23 +127,6 @@ int msm_display_on(void)
 		if (ret)
 			goto msm_display_on_out;
 		break;
-	case LCDC_PANEL:
-		dprintf(INFO, "Turn on LCDC PANEL.\n");
-		ret = mdp_lcdc_on();
-		if (ret)
-			goto msm_display_on_out;
-		break;
-	case HDMI_PANEL:
-		dprintf(INFO, "Turn on HDMI PANEL.\n");
-		ret = hdmi_dtv_on();
-		if (ret)
-			goto msm_display_on_out;
-
-		ret = hdmi_msm_turn_on();
-		if (ret)
-			goto msm_display_on_out;
-		break;
-
 	default:
 		return ERR_INVALID_ARGS;
 	};
