@@ -194,10 +194,6 @@ int msm_display_off(void)
 	pinfo = &(panel->panel_info);
 
 	switch (pinfo->type) {
-	case LVDS_PANEL:
-		dprintf(INFO, "Turn off LVDS PANEL.\n");
-		mdp_lcdc_off();
-		break;
 	case MIPI_VIDEO_PANEL:
 		dprintf(INFO, "Turn off MIPI_VIDEO_PANEL.\n");
 		ret = mdp_dsi_video_off();
@@ -215,10 +211,6 @@ int msm_display_off(void)
 		ret = mipi_dsi_off();
 		if (ret)
 			goto msm_display_off_out;
-		break;
-	case LCDC_PANEL:
-		dprintf(INFO, "Turn off LCDC PANEL.\n");
-		mdp_lcdc_off();
 		break;
 	default:
 		return ERR_INVALID_ARGS;
