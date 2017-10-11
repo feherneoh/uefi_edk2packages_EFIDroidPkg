@@ -50,67 +50,6 @@
 static struct msm_fb_panel_data panel;
 static uint8_t display_enable;
 
-static int apq8064_lvds_panel_power(int enable)
-{
-	if (enable) {
-		/* Enable LVS7 */
-		gPM8921->pm8921_low_voltage_switch_enable(lvs_7);
-		/* Set and enabale LDO2 1.2V for  VDDA_LVDS_PLL*/
-		gPM8921->pm8921_ldo_set_voltage(LDO_2, LDO_VOLTAGE_1_2V);
-
-		/* Enable Ext 3.3V -  MSM GPIO 77*/
-		/* TODO: IS this really needed? This wasn't even implemented correctly.
-		 * GPIO enable was not happening.
-		 */
-		apq8064_ext_3p3V_enable();
-
-		apq8064_display_gpio_init();
-
-		/* Configure PMM MPP  3*/
-		gPM8921->pm8921_mpp_set_digital_output(mpp_3);
-	}
-
-	return 0;
-}
-
-static int apq8064_lvds_clock(int enable)
-{
-	if (enable)
-		mdp_clock_init();
-
-	return 0;
-}
-
-static int fusion3_mtp_panel_power(int enable)
-{
-	if (enable) {
-		/* Enable LVS7 */
-		gPM8921->pm8921_low_voltage_switch_enable(7);
-
-		/* Set and enabale LDO2 1.2V for  VDDA_MIPI_DSI0/1_PLL */
-		gPM8921->pm8921_ldo_set_voltage(LDO_2, LDO_VOLTAGE_1_2V);
-
-		/* Set and enabale LDO11 3.0V for  LCD1_MIPI_AVDD */
-		gPM8921->pm8921_ldo_set_voltage(LDO_11, LDO_VOLTAGE_3_0V);
-
-		apq8064_display_gpio_init();
-	}
-
-	return 0;
-}
-
-static int fusion3_mtp_clock(int enable)
-{
-	if (enable) {
-		mdp_clock_init();
-		mmss_clock_init();
-	} else if(!target_cont_splash_screen()) {
-		mmss_clock_disable();
-	}
-
-	return 0;
-}
-
 static void msm8960_backlight_on(void)
 {
 	struct pm8921_gpio backlight_pwm = {
@@ -154,24 +93,6 @@ static int msm8960_mipi_panel_clock(int enable)
 	} else if(!target_cont_splash_screen()) {
 			mmss_clock_disable();
 	}
-
-	return 0;
-}
-
-static int mpq8064_hdmi_panel_clock(int enable)
-{
-	if (enable)
-		mdp_clock_init();
-
-	hdmi_app_clk_init(enable);
-
-	return 0;
-}
-
-static int mpq8064_hdmi_panel_power(int enable)
-{
-	if (enable)
-		hdmi_power_init();
 
 	return 0;
 }
@@ -286,28 +207,6 @@ void target_display_init(void)
 		panel.fb.format = FB_FORMAT_RGB888;
 		panel.mdp_rev = MDP_REV_44;
 		break;
-	case LINUX_MACHTYPE_8064_CDP:
-		lvds_chimei_wxga_init(&(panel.panel_info));
-		panel.clk_func = apq8064_lvds_clock;
-		panel.power_func = apq8064_lvds_panel_power;
-		panel.fb.width =  panel.panel_info.xres;
-		panel.fb.height =  panel.panel_info.yres;
-		panel.fb.stride =  panel.panel_info.xres;
-		panel.fb.bpp =  panel.panel_info.bpp;
-		panel.fb.format = FB_FORMAT_RGB888;
-		panel.mdp_rev = MDP_REV_44;
-		break;
-	case LINUX_MACHTYPE_8064_MTP:
-		mipi_toshiba_video_wsvga_init(&(panel.panel_info));
-		panel.clk_func = fusion3_mtp_clock;
-		panel.power_func = fusion3_mtp_panel_power;
-		panel.fb.width =  panel.panel_info.xres;
-		panel.fb.height =  panel.panel_info.yres;
-		panel.fb.stride =  panel.panel_info.xres;
-		panel.fb.bpp =  panel.panel_info.bpp;
-		panel.fb.format = FB_FORMAT_RGB888;
-		panel.mdp_rev = MDP_REV_44;
-		break;
 	case LINUX_MACHTYPE_8960_CDP:
 	case LINUX_MACHTYPE_8960_MTP:
 	case LINUX_MACHTYPE_8960_FLUID:
@@ -320,23 +219,6 @@ void target_display_init(void)
 		panel.fb.bpp =  panel.panel_info.bpp;
 		panel.fb.format = FB_FORMAT_RGB888;
 		panel.mdp_rev = MDP_REV_42;
-		break;
-	case LINUX_MACHTYPE_8064_MPQ_CDP:
-	case LINUX_MACHTYPE_8064_MPQ_HRD:
-	case LINUX_MACHTYPE_8064_MPQ_DTV:
-		hdmi_msm_panel_init(&panel.panel_info);
-
-		panel.clk_func   = mpq8064_hdmi_panel_clock;
-		panel.power_func = mpq8064_hdmi_panel_power;
-		panel.fb.width   = panel.panel_info.xres;
-		panel.fb.height  = panel.panel_info.yres;
-		panel.fb.stride  = panel.panel_info.xres;
-		panel.fb.bpp     = panel.panel_info.bpp;
-		panel.fb.format  = FB_FORMAT_RGB565;
-		panel.mdp_rev    = MDP_REV_44;
-		panel.fb.base    = (void *) memalign(4096, panel.fb.width * panel.fb.height * (panel.fb.bpp / 8));
-
-		hdmi_set_fb_addr(panel.fb.base);
 		break;
 	default:
 		return;
