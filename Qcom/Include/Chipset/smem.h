@@ -416,6 +416,9 @@ enum {
 	MSM8609  = 275,
 	FSM9916  = 276,
 	MSM8976  = 278,
+	MSM8953  = 293,
+	APQ8053  = 304,
+	SDM450   = 338,
 };
 
 enum platform {

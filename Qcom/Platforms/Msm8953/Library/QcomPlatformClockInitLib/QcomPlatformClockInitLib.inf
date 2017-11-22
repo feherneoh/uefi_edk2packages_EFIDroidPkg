@@ -1,0 +1,24 @@
+[Defines]
+  INF_VERSION                    = 0x00010005
+  BASE_NAME                      = QcomPlatformClockInitLib
+  FILE_GUID                      = 4B2CFA4B-2198-462D-9F59-7B57ECC5F0AE
+  MODULE_TYPE                    = BASE
+  VERSION_STRING                 = 1.0
+  LIBRARY_CLASS                  = QcomPlatformClockInitLib
+
+
+[Sources.common]
+  msm8953-clock.c
+
+[Packages]
+  MdePkg/MdePkg.dec
+  ArmPkg/ArmPkg.dec
+  EmbeddedPkg/EmbeddedPkg.dec
+  EFIDroidPkg/EFIDroidPkg.dec
+  EFIDroidPkg/Qcom/Qcom.dec
+  EFIDroidPkg/Qcom/Platforms/Msm8953/Msm8953.dec
+
+[LibraryClasses]
+  IoLib
+  ArmLib
+  PlatformIdLib

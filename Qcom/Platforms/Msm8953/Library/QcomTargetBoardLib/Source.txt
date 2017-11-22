@@ -1,0 +1,2 @@
+URL:    https://source.codeaurora.org/quic/la/kernel/lk
+BRANCH: lk.lnx.1.0.r14-rel
