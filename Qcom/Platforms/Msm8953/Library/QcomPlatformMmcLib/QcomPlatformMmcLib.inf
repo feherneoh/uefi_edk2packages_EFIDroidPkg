@@ -1,0 +1,23 @@
+[Defines]
+  INF_VERSION                    = 0x00010005
+  BASE_NAME                      = QcomPlatformMmcLib
+  FILE_GUID                      = EF1F1327-148E-4956-9EBB-D22D4E7DBA58
+  MODULE_TYPE                    = BASE
+  VERSION_STRING                 = 1.0
+  LIBRARY_CLASS                  = QcomPlatformMmcLib
+
+
+[Sources.common]
+  QcomPlatformMmcLib.c
+
+[Packages]
+  MdePkg/MdePkg.dec
+  ArmPkg/ArmPkg.dec
+  EmbeddedPkg/EmbeddedPkg.dec
+  EFIDroidPkg/EFIDroidPkg.dec
+  EFIDroidPkg/Qcom/Qcom.dec
+  EFIDroidPkg/Qcom/Platforms/Msm8953/Msm8953.dec
+
+[LibraryClasses]
+  DebugLib
+  ClockLib
