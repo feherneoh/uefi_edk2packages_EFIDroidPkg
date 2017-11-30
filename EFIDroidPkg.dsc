@@ -35,7 +35,7 @@
   #
   DEFINE SECURE_BOOT_ENABLE      = FALSE
 
-  DEFINE FVMAIN_COMPRESSION_METHOD = LZMA
+  DEFINE FVMAIN_COMPRESSION_METHOD = GZIP
 
 !include EFIDroidPkg/EFIDroid.dsc.inc
 
@@ -165,6 +165,9 @@
 !endif
 !if $(FVMAIN_COMPRESSION_METHOD) == BROTLI
       NULL|MdeModulePkg/Library/BrotliCustomDecompressLib/BrotliCustomDecompressLib.inf
+!endif
+!if $(FVMAIN_COMPRESSION_METHOD) == GZIP
+      NULL|MdeModulePkg/Library/GzipCustomDecompressLib/GzipCustomDecompressLib.inf
 !endif
       PrePiLib|EmbeddedPkg/Library/PrePiLib/PrePiLib.inf
       HobLib|EmbeddedPkg/Library/PrePiHobLib/PrePiHobLib.inf
